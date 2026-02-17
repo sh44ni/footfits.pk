@@ -51,7 +51,7 @@ function CheckoutContent() {
     });
 
     const subtotal = getSubtotal();
-    const deliveryFee = subtotal >= 5000 ? 0 : 200;
+    const deliveryFee = 0; // Free shipping promo
 
     // Validate voucher on load
     useEffect(() => {
@@ -409,7 +409,10 @@ function CheckoutContent() {
                         </div>
                         <div className="flex justify-between text-gray-600">
                             <span>Delivery Fee</span>
-                            <span>{deliveryFee === 0 ? 'FREE' : formatPrice(deliveryFee)}</span>
+                            <span className="flex items-center gap-2">
+                                <span className="text-gray-400 line-through text-xs">Rs 270</span>
+                                <span className="text-[#284E3D] font-bold">Free</span>
+                            </span>
                         </div>
                         {discount > 0 && (
                             <div className="flex justify-between text-green-600">

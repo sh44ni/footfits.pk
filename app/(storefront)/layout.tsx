@@ -9,6 +9,9 @@ export default function StorefrontLayout({
 }) {
     return (
         <>
+            <div className="bg-[#284E3D] text-white text-center py-2 text-sm font-medium tracking-wide">
+                Free Delivery all over Pakistan - Limited Time Only
+            </div>
             <Navbar />
             <main className="min-h-screen">
                 {children}

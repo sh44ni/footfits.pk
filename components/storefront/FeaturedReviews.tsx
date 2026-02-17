@@ -47,11 +47,14 @@ export default async function FeaturedReviews() {
     // }
 
     return (
-        <section className="py-16 bg-[#F9F9F9]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-[#284E3D] mb-4">What Our Customers Say</h2>
-                    <p className="text-gray-600">Real reviews from verified buyers</p>
+        <section className="pt-12 pb-8 bg-white relative overflow-hidden">
+            {/* Decorative background element */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#284E3D]/10 to-transparent"></div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="text-center mb-10">
+                    <h2 className="text-2xl font-bold text-[#284E3D] tracking-tight mb-2">What Our Customers Say</h2>
+                    <div className="h-1 w-20 bg-[#284E3D] mx-auto rounded-full"></div>
                 </div>
 
                 {reviews.length > 0 ? (
@@ -97,7 +100,7 @@ export default async function FeaturedReviews() {
                 )}
             </div>
 
-            <div className="flex justify-center gap-4 mt-12">
+            <div className="flex justify-center gap-4 mt-8">
                 <Button asChild variant="outline" className="border-[#284E3D] text-[#284E3D] hover:bg-[#284E3D] hover:text-white">
                     <Link href="/reviews">
                         See All Reviews

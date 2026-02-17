@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 
-export default function SignupPage() {
+function SignupForm() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         full_name: '',
@@ -15,6 +16,11 @@ export default function SignupPage() {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const searchParams = useSearchParams();
+    const redirectUrl = searchParams.get('redirect') || '/';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,7 +41,7 @@ export default function SignupPage() {
             });
 
             if (res.ok) {
-                window.location.href = '/'; // Refresh to update Navbar
+                window.location.href = redirectUrl; // Refresh to update Navbar
             } else {
                 const data = await res.json();
                 setError(data.error || 'Signup failed');
@@ -93,25 +99,47 @@ export default function SignupPage() {
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
                     </div>
-                    <div>
+                    <div className="relative">
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             required
-                            className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                            className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm pr-10"
                             placeholder="Password"
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500 focus:outline-none z-20"
+                        >
+                            {showPassword ? (
+                                <EyeOff className="h-5 w-5" aria-hidden="true" />
+                            ) : (
+                                <Eye className="h-5 w-5" aria-hidden="true" />
+                            )}
+                        </button>
                     </div>
-                    <div>
+                    <div className="relative">
                         <input
-                            type="password"
+                            type={showConfirmPassword ? "text" : "password"}
                             required
-                            className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                            className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm pr-10"
                             placeholder="Confirm Password"
                             value={formData.confirmPassword}
                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500 focus:outline-none z-20"
+                        >
+                            {showConfirmPassword ? (
+                                <EyeOff className="h-5 w-5" aria-hidden="true" />
+                            ) : (
+                                <Eye className="h-5 w-5" aria-hidden="true" />
+                            )}
+                        </button>
                     </div>
 
                     <div className="pt-4">
@@ -126,5 +154,13 @@ export default function SignupPage() {
                 </form>
             </div>
         </div>
+    );
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <SignupForm />
+        </Suspense>
     );
 }

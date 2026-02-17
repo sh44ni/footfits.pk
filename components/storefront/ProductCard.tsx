@@ -4,9 +4,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, Footprints } from 'lucide-react';
 import { Product } from '@/types';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, calculateDiscount } from '@/lib/utils';
 import { useCart } from '@/lib/context/CartContext';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface ProductCardProps {
     product: Product;
@@ -23,10 +24,15 @@ export default function ProductCard({ product }: ProductCardProps) {
     const { addItem } = useCart();
     const [isWishlisted, setIsWishlisted] = useState(false);
 
+    // ... (inside component)
+
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
         if (product.sizes && product.sizes.length > 0) {
             addItem(product, product.sizes[0], 1);
+            toast.success('Added to Cart', {
+                description: `${product.name} (${product.sizes[0]}) added.`
+            });
         }
     };
 
@@ -57,6 +63,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                                 NEW
                             </span>
                         )}
+                        {product.original_price && Number(product.original_price) > Number(product.price) && (
+                            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded ml-2">
+                                {calculateDiscount(Number(product.original_price), Number(product.price))}% OFF
+                            </span>
+                        )}
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
@@ -82,14 +93,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {/* Content */}
                 <div className="p-3 space-y-1.5">
                     <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wide">
-                        {product.brand}
+                        {product.brand} • {product.gender}
                     </p>
                     <h3 className="text-sm font-bold text-foreground line-clamp-1">
                         {product.name}
                     </h3>
                     <div className="flex items-center justify-between">
                         <div>
-                            {product.is_sale && product.original_price ? (
+                            {product.original_price && Number(product.original_price) > Number(product.price) ? (
                                 <div className="flex items-center space-x-2">
                                     <p className="text-base font-bold text-foreground">
                                         {formatPrice(product.price)}

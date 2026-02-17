@@ -40,7 +40,7 @@ export default async function ProductDetailPage({
                 {/* Right Column: Product Info */}
                 <div className="space-y-4">
                     <p className="text-xs uppercase text-secondary font-semibold tracking-wide">
-                        {product.brand}
+                        {product.brand} • {product.gender}'s Shoes
                     </p>
                     <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
 
@@ -56,7 +56,7 @@ export default async function ProductDetailPage({
                     </div>
 
                     <div className="flex items-center space-x-3">
-                        {product.is_sale && product.original_price ? (
+                        {product.original_price && Number(product.original_price) > Number(product.price) ? (
                             <>
                                 <p className="text-3xl font-bold text-foreground">
                                     {formatPrice(product.price)}

@@ -26,27 +26,29 @@ export default async function HomePage() {
             <BrandCircles />
 
             {/* Products Grid */}
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900">Browse Our Collection</h2>
-                    <Link href="/shop" className="text-[#284E3D] font-medium hover:underline hidden md:inline-block">View All</Link>
-                </div>
+            <section className="bg-soft-gray bg-dot-pattern/50 pt-6 pb-12 section-divider-top section-divider-bottom">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-10">
+                        <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Browse Our Collection</h2>
+                        <div className="h-1 w-20 bg-[#284E3D] mx-auto rounded-full"></div>
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {products.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
 
-                {/* Shop All Button */}
-                <div className="flex justify-center mt-12">
-                    <Link
-                        href="/shop"
-                        className="inline-flex items-center space-x-2 bg-[#284E3D] text-white font-semibold px-8 py-3 rounded-full hover:bg-[#1e3a2d] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                        <span>Shop All Products</span>
-                        <ArrowRight className="w-5 h-5" />
-                    </Link>
+                    {/* Shop All Button */}
+                    <div className="flex justify-center mt-12">
+                        <Link
+                            href="/shop"
+                            className="inline-flex items-center space-x-2 bg-[#284E3D] text-white font-bold px-10 py-4 rounded-full hover:bg-[#1e3a2d] transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+                        >
+                            <span>Explore Full Catalog</span>
+                            <ArrowRight className="w-5 h-5" />
+                        </Link>
+                    </div>
                 </div>
             </section>
 

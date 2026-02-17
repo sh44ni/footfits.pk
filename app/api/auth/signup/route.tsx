@@ -5,6 +5,8 @@ import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { customers } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { resend } from '@/lib/resend';
+import WelcomeEmail from '@/components/emails/WelcomeEmail';
 
 export async function POST(request: NextRequest) {
     try {
@@ -61,6 +63,20 @@ export async function POST(request: NextRequest) {
             email: newUser.email,
             name: newUser.full_name,
         });
+
+        // 5b. Send Welcome Email
+        try {
+            const emailResponse = await resend.emails.send({
+                from: 'FootFits <noreply@footfits.pk>',
+                to: email, // Validated above
+                subject: 'Welcome to FootFits! 👟',
+                react: <WelcomeEmail userFirstname={full_name.split(' ')[0]} />,
+            });
+            console.log('Welcome email sent successfully:', emailResponse);
+        } catch (emailError) {
+            console.error('Failed to send welcome email:', emailError);
+            // Don't block signup
+        }
 
         // 6. Set Cookie
         (await cookies()).set('user_session', token, {

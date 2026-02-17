@@ -13,6 +13,7 @@ export default function CartPage() {
     const [discount, setDiscount] = useState(0);
     const [appliedVoucher, setAppliedVoucher] = useState('');
     const [voucherError, setVoucherError] = useState('');
+    const [isApplyingVoucher, setIsApplyingVoucher] = useState(false);
 
     const subtotal = getSubtotal();
     const deliveryFee = subtotal >= 5000 ? 0 : 200;
@@ -20,6 +21,7 @@ export default function CartPage() {
 
     const handleApplyVoucher = async () => {
         setVoucherError('');
+        setIsApplyingVoucher(true);
         try {
             const res = await fetch('/api/vouchers/apply', {
                 method: 'POST',
@@ -40,6 +42,8 @@ export default function CartPage() {
         } catch (error) {
             console.error('Voucher check error:', error);
             setVoucherError('Failed to apply voucher');
+        } finally {
+            setIsApplyingVoucher(false);
         }
     };
 
@@ -143,13 +147,22 @@ export default function CartPage() {
                                     value={voucherCode}
                                     onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
                                     placeholder="Enter code"
-                                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:bg-gray-100"
+                                    disabled={isApplyingVoucher}
                                 />
                                 <button
                                     onClick={handleApplyVoucher}
-                                    className="px-4 py-2 bg-primary text-white font-semibold rounded hover:bg-primary/90 transition-colors"
+                                    disabled={!voucherCode || isApplyingVoucher}
+                                    className="px-4 py-2 bg-primary text-white font-semibold rounded hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                 >
-                                    Apply
+                                    {isApplyingVoucher ? (
+                                        <>
+                                            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            <span>Applying...</span>
+                                        </>
+                                    ) : (
+                                        'Apply'
+                                    )}
                                 </button>
                             </div>
                             {voucherError && <p className="text-xs text-red-500 mt-1">{voucherError}</p>}
@@ -184,12 +197,23 @@ export default function CartPage() {
                         </div>
 
                         {/* Checkout Button */}
-                        <Link
-                            href={`/checkout${appliedVoucher ? `?voucher=${appliedVoucher}` : ''}`}
-                            className="block w-full mt-6 bg-secondary text-foreground font-semibold py-3 rounded-lg text-center hover:bg-secondary/90 transition-colors"
+                        <button
+                            onClick={() => {
+                                fetch('/api/auth/session')
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.authenticated) {
+                                            window.location.href = `/checkout${appliedVoucher ? `?voucher=${appliedVoucher}` : ''}`;
+                                        } else {
+                                            window.location.href = '/checkout/auth';
+                                        }
+                                    })
+                                    .catch(() => window.location.href = '/checkout/auth');
+                            }}
+                            className="block w-full mt-6 bg-secondary text-foreground font-bold py-3 rounded-lg text-center hover:bg-secondary/90 transition-colors"
                         >
                             Proceed to Checkout
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>

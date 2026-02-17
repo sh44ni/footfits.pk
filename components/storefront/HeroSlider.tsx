@@ -36,7 +36,7 @@ export default function HeroSlider({ sliders }: HeroSliderProps) {
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-8">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-2">
             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl shadow-lg">
                 {/* Slides */}
                 {sliders.map((slider, index) => (

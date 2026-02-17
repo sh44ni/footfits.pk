@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function Footer() {
     return (
-        <footer className="bg-[#284E3D] text-white mt-8">
+        <footer className="bg-[#284E3D] text-white mt-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/20 text-center">
                     {/* Brand */}
@@ -32,7 +32,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link href="/about" className="text-xs hover:text-white transition-colors">
-                                    About
+                                    About Us
                                 </Link>
                             </li>
                             <li>

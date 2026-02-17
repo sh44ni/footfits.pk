@@ -5,6 +5,8 @@ import { Product } from '@/types';
 import { useCart } from '@/lib/context/CartContext';
 import { useRouter } from 'next/navigation';
 
+import { toast } from 'sonner';
+
 interface ProductActionsProps {
     product: Product;
 }
@@ -26,8 +28,11 @@ export default function ProductActions({ product }: ProductActionsProps) {
 
         addItem(product, sizeToAdd, 1);
         setError('');
+
         // Optional: Show toast or feedback
-        alert('Added to cart!');
+        toast.success('Added to Cart', {
+            description: `${product.name} (${sizeToAdd}) has been added to your cart.`
+        });
     };
 
     const handleBuyNow = () => {

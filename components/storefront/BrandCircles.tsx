@@ -28,10 +28,12 @@ export default function BrandCircles() {
     ]);
 
     return (
-        <div className="py-12 bg-white relative">
+        <div className="pt-6 pb-4 bg-[#F6F9F8] relative border-t border-gray-100/50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Shop by Brand</h2>
-                <div className="w-16 h-1 bg-[#284E3D] mx-auto rounded-full"></div>
+                <div className="text-center mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Shop by Brand</h2>
+                    <div className="h-1 w-20 bg-[#284E3D] mx-auto rounded-full"></div>
+                </div>
             </div>
 
             {/* Carousel Container */}

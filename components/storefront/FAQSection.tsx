@@ -27,11 +27,11 @@ export default function FAQSection() {
     };
 
     return (
-        <section className="bg-[#F8FAF9] py-16 mt-16 scroll-mt-20" id="faq-section">
+        <section className="bg-[#F2F7F5] bg-grid-pattern pt-8 pb-12 section-divider-top scroll-mt-20" id="faq-section">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-10">
-                    <span className="text-[#284E3D] font-semibold tracking-wider text-sm uppercase mb-2 block">Support</span>
-                    <h2 className="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Frequently Asked Questions</h2>
+                    <div className="h-1 w-20 bg-[#284E3D] mx-auto rounded-full"></div>
                 </div>
 
                 <div className="space-y-4 mb-10">

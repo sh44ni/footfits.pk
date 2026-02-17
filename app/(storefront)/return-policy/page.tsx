@@ -87,7 +87,7 @@ export default function ReturnPolicyPage() {
                 <section>
                     <h2 className="text-2xl font-bold text-[#284E3D] mb-4">How to Initiate a Return</h2>
                     <ol className="list-decimal pl-5 space-y-2">
-                        <li>Contact us on WhatsApp at <strong>+92 313 1118814</strong> or email at <a href="mailto:footfits.pk@gmail.com" className="text-[#284E3D] hover:underline">footfits.pk@gmail.com</a> within 3 days of delivery.</li>
+                        <li>Contact us on WhatsApp at <strong>+92 313 2319987</strong> or email at <a href="mailto:footfits.pk@gmail.com" className="text-[#284E3D] hover:underline">footfits.pk@gmail.com</a> within 3 days of delivery.</li>
                         <li>Provide your order number, the reason for return, and your unboxing video.</li>
                         <li>Our team will respond within 24 hours with return shipping instructions.</li>
                         <li>Ship the shoe back to us using the method we specify.</li>
@@ -126,7 +126,7 @@ export default function ReturnPolicyPage() {
                 <section className="bg-gray-50 p-6 rounded-lg border border-gray-200 mt-8">
                     <h2 className="text-xl font-bold text-[#284E3D] mb-4">Contact for Returns</h2>
                     <ul className="space-y-2 text-sm">
-                        <li><strong>WhatsApp:</strong> +92 313 1118814</li>
+                        <li><strong>WhatsApp:</strong> +92 313 2319987</li>
                         <li><strong>Email:</strong> <a href="mailto:footfits.pk@gmail.com" className="text-[#284E3D] hover:underline">footfits.pk@gmail.com</a></li>
                         <li><strong>Response time:</strong> Within 24 hours on business days</li>
                     </ul>

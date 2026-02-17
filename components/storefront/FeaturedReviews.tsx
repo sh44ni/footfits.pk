@@ -60,8 +60,8 @@ export default async function FeaturedReviews() {
                 {reviews.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {reviews.map((review) => (
-                            <div key={review.id} className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative flex flex-col">
-                                <Quote className="absolute top-6 right-6 w-8 h-8 text-[#284E3D]/10" />
+                            <div key={review.id} className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 border-t-4 border-t-[#284E3D] hover:-translate-y-1 transition-all duration-300 relative flex flex-col">
+                                <Quote className="absolute top-6 right-6 w-10 h-10 text-[#284E3D]/10" />
 
                                 <div className="flex items-center mb-4">
                                     {[...Array(5)].map((_, i) => (

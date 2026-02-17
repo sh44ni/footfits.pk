@@ -1,6 +1,6 @@
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
-import WhatsAppButton from '@/components/storefront/WhatsAppButton';
+import WhatsAppWidget from '@/components/storefront/WhatsAppWidget';
 
 export default function StorefrontLayout({
     children,
@@ -14,7 +14,7 @@ export default function StorefrontLayout({
                 {children}
             </main>
             <Footer />
-            <WhatsAppButton />
+            <WhatsAppWidget />
         </>
     );
 }

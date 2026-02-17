@@ -122,7 +122,7 @@ export default function PrivacyPolicyPage() {
                         <li><strong>SECP Registration:</strong> 0318679</li>
                         <li><strong>FBR NTN:</strong> I196608</li>
                         <li><strong>Email:</strong> <a href="mailto:footfits.pk@gmail.com" className="text-[#284E3D] hover:underline">footfits.pk@gmail.com</a></li>
-                        <li><strong>WhatsApp:</strong> +92 313 1118814</li>
+                        <li><strong>WhatsApp:</strong> +92 313 2319987</li>
                         <li><strong>Address:</strong> Suite 611, Anum Estate, Shahrah-e-Faisal, Karachi, Sindh, Pakistan</li>
                     </ul>
                 </section>

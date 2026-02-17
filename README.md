@@ -1,36 +1,179 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# footfits.pk E-Commerce Platform
 
-## Getting Started
+A modern, full-stack e-commerce platform for footfits.pk - Pakistan's premier thrift shoe store specializing in authentic branded footwear from USA & Europe.
 
-First, run the development server:
+## 🚀 Tech Stack
+
+- **Framework:** Next.js 16+ (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** shadcn/ui
+- **Database:** Neon PostgreSQL
+- **Icons:** Lucide React
+- **State Management:** React Context API
+
+## 📦 Features
+
+### Storefront
+- ✅ Homepage with hero slider and featured products
+- ✅ Product catalog with filtering and sorting
+- ✅ Product detail pages
+- ✅ Shopping cart with persistent storage
+- ✅ Checkout flow
+- ✅ Order tracking
+- ✅ Responsive design with mobile bottom navigation
+- ✅ WhatsApp integration for customer inquiries
+
+### Admin Panel
+- ✅ Dashboard with key metrics
+- ✅ Product management (CRUD operations)
+- ✅ Order management
+- ✅ Customer management
+- ✅ Voucher/discount code management
+- ✅ Hero slider management
+- ✅ Settings configuration
+
+## 🛠️ Setup Instructions
+
+### Prerequisites
+- Node.js 18+ installed
+- Neon PostgreSQL account
+
+### 1. Clone and Install
+
+```bash
+cd footfits
+npm install
+```
+
+### 2. Environment Variables
+
+Create `.env.local` with:
+
+```bash
+# Database
+DATABASE_URL="your-neon-connection-string"
+NEXT_PUBLIC_DATABASE_URL="your-neon-connection-string"
+
+# Store Settings
+NEXT_PUBLIC_STORE_NAME=footfits.pk
+NEXT_PUBLIC_WHATSAPP_NUMBER=+923001234567
+NEXT_PUBLIC_STORE_EMAIL=info@footfits.pk
+NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/footfits.pk
+```
+
+### 3. Database Setup
+
+1. Go to [Neon Console](https://console.neon.tech/app/projects)
+2. Open SQL Editor
+3. Run `neon-schema.sql` (creates tables)
+4. Run `neon-seed.sql` (adds sample data)
+
+See `NEON_SETUP.md` for detailed instructions.
+
+### 4. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## 📁 Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+footfits/
+├── app/
+│   ├── (storefront)/          # Customer-facing pages
+│   │   ├── shop/
+│   │   ├── product/[slug]/
+│   │   ├── cart/
+│   │   ├── checkout/
+│   │   └── track/
+│   ├── admin/                 # Admin panel
+│   │   ├── products/
+│   │   ├── orders/
+│   │   ├── customers/
+│   │   ├── vouchers/
+│   │   └── sliders/
+│   ├── page.tsx              # Homepage
+│   └── layout.tsx
+├── components/
+│   ├── storefront/           # Customer components
+│   └── ui/                   # shadcn/ui components
+├── lib/
+│   ├── db/                   # Database queries
+│   ├── context/              # React Context
+│   └── utils.ts
+├── types/
+│   └── index.ts              # TypeScript types
+├── public/                   # Static assets
+│   ├── logo.svg
+│   ├── logo-white-bg.svg
+│   └── icon.svg
+└── neon-schema.sql           # Database schema
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Brand Colors
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Primary (Dark Green):** `#284E3D`
+- **Secondary (Gold):** `#D4AF37`
+- **Dark Charcoal:** `#2C2C2C`
+- **White:** `#FFFFFF`
+- **Light Gray:** `#F5F5F5`
 
-## Deploy on Vercel
+## 🔐 Admin Access
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Default admin route: `/admin/login`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 Database Schema
+
+- **products** - Product catalog
+- **orders** - Customer orders
+- **customers** - Customer information
+- **vouchers** - Discount codes
+- **sliders** - Homepage hero sliders
+- **banners** - Promotional banners
+- **admin_users** - Admin authentication
+
+## 🚢 Deployment
+
+### Vercel (Recommended)
+
+1. Push to GitHub
+2. Import project in Vercel
+3. Add environment variables
+4. Deploy
+
+### Environment Variables for Production
+
+Make sure to add all variables from `.env.local` to your deployment platform.
+
+## 📱 Features in Development
+
+- [ ] Payment gateway integration (JazzCash, EasyPaisa)
+- [ ] Email notifications
+- [ ] Product reviews and ratings
+- [ ] Wishlist functionality
+- [ ] Advanced search with filters
+- [ ] Image upload to cloud storage
+- [ ] Admin analytics dashboard
+
+## 🤝 Contributing
+
+This is a private project for footfits.pk.
+
+## 📄 License
+
+Proprietary - All rights reserved by footfits.pk
+
+## 📞 Support
+
+For support, email info@footfits.pk or message us on WhatsApp at +923001234567.

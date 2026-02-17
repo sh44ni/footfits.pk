@@ -1,0 +1,20 @@
+import Navbar from '@/components/storefront/Navbar';
+import Footer from '@/components/storefront/Footer';
+import WhatsAppButton from '@/components/storefront/WhatsAppButton';
+
+export default function StorefrontLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <>
+            <Navbar />
+            <main className="min-h-screen pb-16 md:pb-0">
+                {children}
+            </main>
+            <Footer />
+            <WhatsAppButton />
+        </>
+    );
+}

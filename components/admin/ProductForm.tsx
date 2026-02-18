@@ -55,8 +55,12 @@ export default function ProductForm({ initialData, isEdit }: ProductFormProps) {
     };
 
     const handleAddSize = () => {
-        if (sizeUK && sizeEUR) {
-            const sizeString = `UK ${sizeUK} | EUR ${sizeEUR}`;
+        if (sizeUK || sizeEUR) {
+            let sizeString = '';
+            if (sizeUK && sizeEUR) sizeString = `UK ${sizeUK} | EUR ${sizeEUR}`;
+            else if (sizeUK) sizeString = `UK ${sizeUK}`;
+            else if (sizeEUR) sizeString = `EUR ${sizeEUR}`;
+
             if (!formData.sizes.includes(sizeString)) {
                 setFormData(prev => ({ ...prev, sizes: [...prev.sizes, sizeString] }));
                 setSizeUK('');
@@ -84,6 +88,21 @@ export default function ProductForm({ initialData, isEdit }: ProductFormProps) {
         e.preventDefault();
         setLoading(true);
 
+        // Auto-add pending size if user forgot to click Add
+        let currentSizes = [...formData.sizes];
+        if (sizeUK || sizeEUR) {
+            let sizeString = '';
+            if (sizeUK && sizeEUR) sizeString = `UK ${sizeUK} | EUR ${sizeEUR}`;
+            else if (sizeUK) sizeString = `UK ${sizeUK}`;
+            else if (sizeEUR) sizeString = `EUR ${sizeEUR}`;
+
+            if (sizeString && !currentSizes.includes(sizeString)) {
+                currentSizes.push(sizeString);
+                // Update local state just in case
+                setFormData(prev => ({ ...prev, sizes: currentSizes }));
+            }
+        }
+
         // Generate slug if empty
         if (!formData.slug) {
             formData.slug = formData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
@@ -96,7 +115,7 @@ export default function ProductForm({ initialData, isEdit }: ProductFormProps) {
             const res = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, sizes: currentSizes }),
             });
 
             if (!res.ok) throw new Error('Failed to save product');
@@ -387,27 +406,29 @@ export default function ProductForm({ initialData, isEdit }: ProductFormProps) {
 
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
                         <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-100 pb-4">Sizes</h2>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                placeholder="UK"
-                                value={sizeUK}
-                                onChange={(e) => setSizeUK(e.target.value)}
-                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            />
-                            <input
-                                type="text"
-                                placeholder="EUR"
-                                value={sizeEUR}
-                                onChange={(e) => setSizeEUR(e.target.value)}
-                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            />
+                        <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="UK"
+                                    value={sizeUK}
+                                    onChange={(e) => setSizeUK(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="EUR"
+                                    value={sizeEUR}
+                                    onChange={(e) => setSizeEUR(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                />
+                            </div>
                             <button
                                 type="button"
                                 onClick={handleAddSize}
-                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-200"
+                                className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-200"
                             >
-                                Add
+                                Add Size
                             </button>
                         </div>
                         <div className="flex flex-wrap gap-2">

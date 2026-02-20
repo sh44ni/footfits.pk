@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={lexend.className}>
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-H170KZSE8Z"
+          src="https://www.googletagmanager.com/gtag/js?id=G-GPPHN8KXP4"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -32,7 +32,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-H170KZSE8Z');
+            gtag('config', 'G-GPPHN8KXP4');
           `}
         </Script>
         <NextTopLoader color="#284E3D" showSpinner={false} />

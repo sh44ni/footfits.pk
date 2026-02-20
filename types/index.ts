@@ -20,6 +20,8 @@ export interface Product {
     is_new: boolean;
     is_sale: boolean;
     status: 'active' | 'draft' | 'sold' | 'archived';
+    stock: number;
+    is_visible: boolean;
     created_at: string;
     updated_at: string;
 }

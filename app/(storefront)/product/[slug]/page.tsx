@@ -84,11 +84,42 @@ export default async function ProductDetailPage({
                         <p className="text-gray-600">{product.description}</p>
                     </div>
 
-                    {/* Condition Details */}
-                    <div className="pt-4">
-                        <h3 className="font-semibold text-foreground mb-2">Condition Details</h3>
-                        <p className="text-gray-600">{product.condition_notes}</p>
-                    </div>
+                    {/* Stock Urgency Indicator */}
+                    {product.stock !== undefined && product.stock <= 9 && (
+                        <div className="pt-4">
+                            {product.stock === 0 ? (
+                                <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                                    <span className="text-lg">😔</span>
+                                    <div>
+                                        <p className="text-sm font-bold text-red-700">Sold Out</p>
+                                        <p className="text-xs text-red-500">This pair is no longer available</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 relative overflow-hidden">
+                                        {/* Pulse ring */}
+                                        <span className="relative flex h-3 w-3 shrink-0">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                                        </span>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold text-amber-800 leading-tight">
+                                                Only {product.stock} {product.stock === 1 ? 'pair' : 'pairs'} left 🔥
+                                            </p>
+                                            <p className="text-xs text-amber-600 mt-0.5">
+                                                {product.stock <= 3 ? 'Almost gone — grab it before someone else does!' : 'Selling fast — secure yours now'}
+                                            </p>
+                                        </div>
+                                        <span className="text-2xl select-none">👟</span>
+                                    </div>
+                                    <p className="text-xs text-gray-400 mt-1.5 px-1">
+                                        💡 Most of our products are individually hand-picked, single pieces — once gone, they&apos;re gone.
+                                    </p>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 

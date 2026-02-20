@@ -14,7 +14,10 @@ export async function getProducts(filters?: {
         console.log('🔍 Fetching products with filters:', filters);
 
         // Build where conditions
-        const conditions = [eq(productsTable.status, 'active')];
+        const conditions = [
+            eq(productsTable.status, 'active'),
+            eq(productsTable.is_visible, true),
+        ];
 
         if (filters?.brand) {
             const searchBrand = filters.brand.replace(/-/g, ' ');
@@ -66,7 +69,8 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
             .from(productsTable)
             .where(and(
                 eq(productsTable.slug, slug),
-                eq(productsTable.status, 'active')
+                eq(productsTable.status, 'active'),
+                eq(productsTable.is_visible, true)
             ))
             .limit(1);
 

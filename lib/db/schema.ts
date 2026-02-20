@@ -22,6 +22,8 @@ export const products = pgTable('products', {
     is_new: boolean('is_new').default(false),
     is_sale: boolean('is_sale').default(false),
     status: text('status').notNull().default('active'), // 'active', 'draft', 'sold', 'archived'
+    stock: integer('stock').notNull().default(1), // 0 = out of stock
+    is_visible: boolean('is_visible').notNull().default(true), // admin hide/show toggle
     created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
     updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });

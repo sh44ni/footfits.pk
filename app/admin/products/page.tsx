@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Package, Search, Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Package, Search, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -14,6 +14,8 @@ interface ProductRow {
     condition_label: string;
     images: string[];
     created_at: string;
+    stock: number;
+    is_visible: boolean;
 }
 
 const statusColors: Record<string, string> = {
@@ -67,6 +69,19 @@ export default function AdminProductsPage() {
             fetchProducts();
         } catch (error) {
             console.error('Delete error:', error);
+        }
+    };
+
+    const handleToggleVisibility = async (id: string, currentlyVisible: boolean) => {
+        try {
+            await fetch(`/api/admin/products/${id}/visibility`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_visible: !currentlyVisible }),
+            });
+            fetchProducts();
+        } catch (error) {
+            console.error('Visibility toggle error:', error);
         }
     };
 
@@ -128,6 +143,7 @@ export default function AdminProductsPage() {
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Product</th>
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Brand</th>
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Price</th>
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Stock</th>
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Condition</th>
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
                                         <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
@@ -154,6 +170,13 @@ export default function AdminProductsPage() {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-600">{product.brand}</td>
                                                 <td className="px-6 py-4 text-sm font-medium text-gray-800">{formatPrice(Number(product.price))}</td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    {product.stock === 0 ? (
+                                                        <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Out of stock</span>
+                                                    ) : (
+                                                        <span className="text-gray-700 font-medium">{product.stock}</span>
+                                                    )}
+                                                </td>
                                                 <td className="px-6 py-4 text-sm text-gray-600">{product.condition_label}</td>
                                                 <td className="px-6 py-4">
                                                     <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[product.status] || 'bg-gray-100 text-gray-600'}`}>
@@ -162,6 +185,14 @@ export default function AdminProductsPage() {
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
                                                     <div className="flex items-center justify-end gap-2">
+                                                        <button
+                                                            onClick={() => handleToggleVisibility(product.id, product.is_visible)}
+                                                            title={product.is_visible ? 'Hide from website' : 'Show on website'}
+                                                            className={`p-1.5 transition-colors ${product.is_visible ? 'text-green-600 hover:text-gray-400' : 'text-gray-300 hover:text-green-600'
+                                                                }`}
+                                                        >
+                                                            {product.is_visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                                        </button>
                                                         <Link href={`/admin/products/${product.id}`} className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors">
                                                             <Edit className="w-4 h-4" />
                                                         </Link>

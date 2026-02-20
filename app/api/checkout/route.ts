@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { orders, vouchers, customers } from '@/lib/db/schema';
+import { orders, vouchers, customers, products } from '@/lib/db/schema';
 import { v4 as uuidv4 } from 'uuid';
 import { eq, sql } from 'drizzle-orm';
 
@@ -67,6 +67,16 @@ export async function POST(request: NextRequest) {
             await db.update(vouchers)
                 .set({ used_count: sql`${vouchers.used_count} + 1` })
                 .where(eq(vouchers.code, voucherCode));
+        }
+
+        // Decrement stock for each ordered product
+        for (const item of items) {
+            if (item.product?.id) {
+                const qty = item.quantity || 1;
+                await db.update(products)
+                    .set({ stock: sql`GREATEST(${products.stock} - ${qty}, 0)` })
+                    .where(eq(products.id, item.product.id));
+            }
         }
 
         return NextResponse.json({ success: true, orderNumber: newOrder.order_number });

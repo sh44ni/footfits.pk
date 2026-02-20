@@ -41,6 +41,8 @@ export default function ProductForm({ initialData, isEdit }: ProductFormProps) {
         description: initialData?.description || '',
         condition_notes: initialData?.condition_notes || '',
         status: initialData?.status || 'active',
+        stock: initialData?.stock !== undefined ? Number(initialData.stock) : 1,
+        is_visible: initialData?.is_visible !== undefined ? Boolean(initialData.is_visible) : true,
         sizes: initialData?.sizes || [] as string[],
         images: initialData?.images || [],
     });
@@ -334,6 +336,40 @@ export default function ProductForm({ initialData, isEdit }: ProductFormProps) {
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">Stock (pairs available)</label>
+                            <input
+                                type="number"
+                                name="stock"
+                                min="0"
+                                value={formData.stock}
+                                onChange={(e) => setFormData(prev => ({ ...prev, stock: Number(e.target.value) }))}
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                            {formData.stock === 0 && (
+                                <p className="text-xs text-red-500 font-medium">⚠ Out of stock</p>
+                            )}
+                        </div>
+
+                        {/* Visibility Toggle */}
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <div>
+                                <p className="text-sm font-medium text-gray-700">Visible on Website</p>
+                                <p className="text-xs text-gray-500">{formData.is_visible ? 'Shown to customers' : 'Hidden from customers'}</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, is_visible: !prev.is_visible }))}
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.is_visible ? 'bg-green-600' : 'bg-gray-300'
+                                    }`}
+                            >
+                                <span
+                                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${formData.is_visible ? 'translate-x-6' : 'translate-x-1'
+                                        }`}
+                                />
+                            </button>
                         </div>
 
                         <div className="space-y-2">

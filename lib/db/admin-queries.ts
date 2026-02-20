@@ -98,6 +98,8 @@ function sanitizeProductData(data: any) {
         condition_notes: data.condition_notes ?? '',
         images: data.images ?? [],
         status: data.status ?? 'active',
+        stock: data.stock !== undefined ? Number(data.stock) : 1,
+        is_visible: data.is_visible !== undefined ? Boolean(data.is_visible) : true,
         is_new: data.is_new ?? false,
         is_sale: data.is_sale ?? false,
     };
@@ -133,6 +135,20 @@ export async function adminDeleteProduct(id: string) {
         return true;
     } catch (error) {
         console.error('Error deleting product:', error);
+        throw error;
+    }
+}
+
+export async function adminToggleProductVisibility(id: string, is_visible: boolean) {
+    try {
+        const [product] = await db
+            .update(products)
+            .set({ is_visible, updated_at: new Date() })
+            .where(eq(products.id, id))
+            .returning();
+        return product;
+    } catch (error) {
+        console.error('Error toggling visibility:', error);
         throw error;
     }
 }

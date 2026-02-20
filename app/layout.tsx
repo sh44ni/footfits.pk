@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/context/CartContext";
+import Script from "next/script";
 
 const lexend = Lexend({ subsets: ["latin"] });
 
@@ -21,6 +22,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={lexend.className}>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-H170KZSE8Z"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-H170KZSE8Z');
+          `}
+        </Script>
         <NextTopLoader color="#284E3D" showSpinner={false} />
         <CartProvider>
           {children}

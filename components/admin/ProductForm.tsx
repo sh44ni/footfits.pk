@@ -118,7 +118,14 @@ export default function ProductForm({ initialData, isEdit }: ProductFormProps) {
                 body: JSON.stringify({ ...formData, sizes: currentSizes }),
             });
 
-            if (!res.ok) throw new Error('Failed to save product');
+            if (!res.ok) {
+                let errMsg = `Server error ${res.status}`;
+                try {
+                    const errBody = await res.json();
+                    errMsg = errBody?.error || errMsg;
+                } catch { }
+                throw new Error(errMsg);
+            }
 
             router.push('/admin/products');
             router.refresh();

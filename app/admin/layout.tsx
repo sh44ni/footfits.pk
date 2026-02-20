@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
     LayoutDashboard,
@@ -97,16 +98,17 @@ export default function AdminLayout({
             >
                 <div className="flex flex-col h-full">
                     {/* Logo */}
-                    <div className="p-6 border-b border-gray-700">
-                        <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                                <span className="text-secondary font-bold text-sm">F</span>
-                            </div>
-                            <div>
-                                <span className="text-lg font-bold">footfits.pk</span>
-                                <span className="block text-xs text-gray-400">Admin Panel</span>
-                            </div>
-                        </div>
+                    <div className="px-5 py-5 border-b border-gray-700">
+                        <Link href="/admin">
+                            <Image
+                                src="/logo-footer.svg"
+                                alt="FootFits"
+                                width={148}
+                                height={34}
+                                priority
+                            />
+                        </Link>
+                        <span className="block text-xs text-gray-400 mt-1 pl-0.5">Admin Panel</span>
                     </div>
 
                     {/* Navigation */}

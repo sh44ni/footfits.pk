@@ -39,7 +39,7 @@ export const WelcomeEmail = ({ userFirstname }: WelcomeEmailProps) => (
             {/* ── LOGO AREA ── */}
             <Section style={logoSection}>
                 <Img
-                    src={`${baseUrl}/logo.svg`}
+                    src={`${baseUrl}/logo-email.png`}
                     alt="FootFits"
                     width="220"
                     height="50"
@@ -142,7 +142,7 @@ export const WelcomeEmail = ({ userFirstname }: WelcomeEmailProps) => (
             {/* ── FOOTER ── */}
             <Section style={footerSection}>
                 <Img
-                    src={`${baseUrl}/logo.svg`}
+                    src={`${baseUrl}/logo-email.png`}
                     alt="FootFits"
                     width="100"
                     height="22"

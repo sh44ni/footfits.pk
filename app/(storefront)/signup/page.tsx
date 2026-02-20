@@ -10,6 +10,7 @@ function SignupForm() {
     const [formData, setFormData] = useState({
         full_name: '',
         email: '',
+        phone: '',
         password: '',
         confirmPassword: '',
         website: '' // Honeypot field
@@ -97,6 +98,16 @@ function SignupForm() {
                             placeholder="Email address"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                    </div>
+                    <div>
+                        <input
+                            type="tel"
+                            required
+                            className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                            placeholder="Mobile Number (e.g. 03XX-XXXXXXX)"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         />
                     </div>
                     <div className="relative">

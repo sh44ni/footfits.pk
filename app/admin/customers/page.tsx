@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Users, Search } from 'lucide-react';
+import { Users, Search, Trash2 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
 interface CustomerRow {
@@ -49,6 +49,16 @@ export default function AdminCustomersPage() {
         fetchCustomers();
     };
 
+    const handleDelete = async (id: string, name: string) => {
+        if (!confirm(`Delete customer "${name}"? This cannot be undone.`)) return;
+        try {
+            await fetch(`/api/admin/customers/${id}`, { method: 'DELETE' });
+            fetchCustomers();
+        } catch (error) {
+            console.error('Delete error:', error);
+        }
+    };
+
     return (
         <div>
             <div className="mb-6">
@@ -79,6 +89,7 @@ export default function AdminCustomersPage() {
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Orders</th>
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Total Spent</th>
                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Joined</th>
+                                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
@@ -93,6 +104,15 @@ export default function AdminCustomersPage() {
                                             <td className="px-6 py-4 text-sm font-medium text-gray-800">{c.total_orders}</td>
                                             <td className="px-6 py-4 text-sm font-medium text-gray-800">{formatPrice(Number(c.total_spent))}</td>
                                             <td className="px-6 py-4 text-sm text-gray-500">{new Date(c.created_at).toLocaleDateString()}</td>
+                                            <td className="px-6 py-4 text-right">
+                                                <button
+                                                    onClick={() => handleDelete(c.id, c.name)}
+                                                    className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                                                    title="Delete customer"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

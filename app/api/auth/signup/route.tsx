@@ -11,17 +11,15 @@ import WelcomeEmail from '@/components/emails/WelcomeEmail';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { email, password, full_name, website } = body;
+        const { email, password, full_name, phone, website } = body;
 
         // 1. Spam Protection: Honeypot Check
-        // If the 'website' field (hidden in UI) is filled, it's likely a bot.
         if (website) {
-            // Return success to confuse the bot, but do nothing.
             return NextResponse.json({ success: true });
         }
 
         // 2. Validate Input
-        if (!email || !password || !full_name) {
+        if (!email || !password || !full_name || !phone) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
@@ -46,8 +44,8 @@ export async function POST(request: NextRequest) {
                 await db.insert(customers).values({
                     name: full_name,
                     email: email,
-                    phone: null, // Allowed now
-                    city: 'Unknown', // Placeholder until first order
+                    phone: phone || null,
+                    city: 'Unknown',
                     total_orders: 0,
                     total_spent: '0',
                 });

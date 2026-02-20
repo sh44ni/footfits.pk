@@ -26,7 +26,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         const product = await adminUpdateProduct(id, data);
         return NextResponse.json(product);
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
+        console.error('PUT /api/admin/products/[id] error:', error);
+        const message = error instanceof Error ? error.message : 'Failed to update product';
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }
 

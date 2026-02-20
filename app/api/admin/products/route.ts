@@ -30,6 +30,8 @@ export async function POST(request: NextRequest) {
         const product = await adminCreateProduct(data);
         return NextResponse.json(product, { status: 201 });
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+        console.error('POST /api/admin/products error:', error);
+        const message = error instanceof Error ? error.message : 'Failed to create product';
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }

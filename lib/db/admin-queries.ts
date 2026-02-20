@@ -81,9 +81,31 @@ export async function adminGetProductById(id: string) {
     }
 }
 
+function sanitizeProductData(data: any) {
+    return {
+        slug: data.slug,
+        name: data.name,
+        brand: data.brand,
+        gender: data.gender,
+        category: data.category,
+        condition_label: data.condition_label,
+        condition_score: data.condition_score,
+        sizes: data.sizes ?? [],
+        price: data.price,
+        original_price: data.original_price || null,
+        color: data.color,
+        description: data.description,
+        condition_notes: data.condition_notes ?? '',
+        images: data.images ?? [],
+        status: data.status ?? 'active',
+        is_new: data.is_new ?? false,
+        is_sale: data.is_sale ?? false,
+    };
+}
+
 export async function adminCreateProduct(data: any) {
     try {
-        const [product] = await db.insert(products).values(data).returning();
+        const [product] = await db.insert(products).values(sanitizeProductData(data)).returning();
         return product;
     } catch (error) {
         console.error('Error creating product:', error);
@@ -93,7 +115,11 @@ export async function adminCreateProduct(data: any) {
 
 export async function adminUpdateProduct(id: string, data: any) {
     try {
-        const [product] = await db.update(products).set({ ...data, updated_at: new Date() }).where(eq(products.id, id)).returning();
+        const [product] = await db
+            .update(products)
+            .set({ ...sanitizeProductData(data), updated_at: new Date() })
+            .where(eq(products.id, id))
+            .returning();
         return product;
     } catch (error) {
         console.error('Error updating product:', error);

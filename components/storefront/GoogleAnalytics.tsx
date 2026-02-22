@@ -1,6 +1,5 @@
 'use client';
 
-import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
 
@@ -11,7 +10,8 @@ function RouteTracker() {
     const searchParams = useSearchParams();
 
     useEffect(() => {
-        if (pathname && window.gtag) {
+        // Wait for gtag to be available
+        if (typeof window !== 'undefined' && window.gtag) {
             let url = pathname;
             if (searchParams && searchParams.toString()) {
                 url += `?${searchParams.toString()}`;
@@ -28,13 +28,9 @@ function RouteTracker() {
 export default function GoogleAnalytics() {
     return (
         <>
-            <Script
-                strategy="afterInteractive"
-                src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-            />
-            <Script
-                id="google-analytics"
-                strategy="afterInteractive"
+            {/* Raw script injection to completely bypass Next.js Script lifecycle issues */}
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
+            <script
                 dangerouslySetInnerHTML={{
                     __html: `
             window.dataLayer = window.dataLayer || [];

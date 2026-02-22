@@ -1,32 +1,46 @@
-
 import { Truck, ShieldCheck, RotateCcw } from 'lucide-react';
+
+const badges = [
+    {
+        icon: Truck,
+        title: 'Free Delivery',
+        subtitle: 'On orders above Rs. 5,000',
+        color: 'text-[#284E3D]',
+        bg: 'bg-[#284E3D]/8',
+    },
+    {
+        icon: ShieldCheck,
+        title: '100% Authentic',
+        subtitle: 'Every pair personally verified',
+        color: 'text-[#284E3D]',
+        bg: 'bg-[#284E3D]/8',
+    },
+    {
+        icon: RotateCcw,
+        title: 'Hassle-Free Returns',
+        subtitle: '3-day return window, no drama',
+        color: 'text-[#284E3D]',
+        bg: 'bg-[#284E3D]/8',
+    },
+];
 
 export default function TrustBadges() {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-8 border-t border-gray-100 mt-8">
-            <div className="flex flex-col items-center text-center space-y-2">
-                <div className="p-3 bg-gray-50 rounded-full text-[#284E3D]">
-                    <Truck className="w-6 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100 border border-gray-100 rounded-2xl mt-8 overflow-hidden">
+            {badges.map(({ icon: Icon, title, subtitle, color, bg }) => (
+                <div
+                    key={title}
+                    className="flex items-center gap-3 px-6 py-5 bg-white hover:bg-gray-50/70 transition-colors duration-150"
+                >
+                    <div className={`shrink-0 p-2.5 rounded-xl ${bg}`}>
+                        <Icon className={`w-5 h-5 ${color}`} />
+                    </div>
+                    <div>
+                        <p className="font-semibold text-gray-900 text-sm">{title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>
+                    </div>
                 </div>
-                <h3 className="font-semibold text-gray-900">Free Delivery</h3>
-                <p className="text-sm text-gray-500">On Orders Above Rs. 5,000</p>
-            </div>
-
-            <div className="flex flex-col items-center text-center space-y-2">
-                <div className="p-3 bg-gray-50 rounded-full text-[#284E3D]">
-                    <ShieldCheck className="w-6 h-6" />
-                </div>
-                <h3 className="font-semibold text-gray-900">100% Original</h3>
-                <p className="text-sm text-gray-500">Verified & Authenticated</p>
-            </div>
-
-            <div className="flex flex-col items-center text-center space-y-2">
-                <div className="p-3 bg-gray-50 rounded-full text-[#284E3D]">
-                    <RotateCcw className="w-6 h-6" />
-                </div>
-                <h3 className="font-semibold text-gray-900">3-Day Easy Returns</h3>
-                <p className="text-sm text-gray-500">Unboxing Video Required</p>
-            </div>
+            ))}
         </div>
     );
 }

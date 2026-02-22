@@ -13,6 +13,10 @@ const pakistaniCities = [
     'Hyderabad', 'Abbottabad', 'Sargodha', 'Bahawalpur', 'Sukkur'
 ];
 
+// Shared ref so CheckoutPage's useEffect knows not to redirect to /cart
+// after a successful order submission clears the cart.
+export const orderSubmittedRef = { current: false };
+
 function CheckoutContent() {
     const { items, getSubtotal, clearCart } = useCart();
     const router = useRouter();
@@ -162,8 +166,23 @@ function CheckoutContent() {
             }
 
             const data = await res.json();
+            orderSubmittedRef.current = true;
             clearCart();
-            router.push(`/order-confirmation?order=${data.orderNumber}`);
+            const orderPayload = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                address: formData.address,
+                city: formData.city,
+                paymentMethod: formData.paymentMethod,
+                items,
+                subtotal,
+                discount,
+                total,
+                voucherCode: voucherCode || null,
+            };
+            const encodedPayload = btoa(encodeURIComponent(JSON.stringify(orderPayload)));
+            router.push(`/order-confirmation?order=${data.orderNumber}&d=${encodedPayload}`);
         } catch (error) {
             console.error('Error submitting order:', error);
             alert('Failed to place order. Please try again.');
@@ -445,7 +464,7 @@ export default function CheckoutPage() {
     const router = useRouter();
 
     useEffect(() => {
-        if (items.length === 0) {
+        if (items.length === 0 && !orderSubmittedRef.current) {
             router.push('/cart');
         }
     }, [items, router]);

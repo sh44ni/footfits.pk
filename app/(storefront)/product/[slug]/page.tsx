@@ -44,18 +44,29 @@ export default async function ProductDetailPage({
                     </p>
                     <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
 
-                    <div className="flex items-center space-x-2">
-                        <span className="bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                    {/* Condition + Brand New badges */}
+                    <div className="flex items-center flex-wrap gap-2">
+                        {/* Condition Badge — color scales with score */}
+                        <span className={`inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-full border ${product.condition_score >= 9
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : product.condition_score >= 7
+                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                    : 'bg-orange-50 text-orange-700 border-orange-200'
+                            }`}>
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" /></svg>
                             {product.condition_label}
                         </span>
+
+                        {/* Brand New Badge */}
                         {product.is_new && (
-                            <span className="bg-green-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
-                                Brand New
+                            <span className="inline-flex items-center gap-1 text-sm font-bold px-3 py-1.5 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-sm">
+                                ✦ Brand New
                             </span>
                         )}
                     </div>
 
-                    <div className="flex items-center space-x-3">
+                    {/* Price row */}
+                    <div className="flex items-center gap-3 flex-wrap">
                         {product.original_price && Number(product.original_price) > Number(product.price) ? (
                             <>
                                 <p className="text-3xl font-bold text-foreground">
@@ -64,8 +75,9 @@ export default async function ProductDetailPage({
                                 <p className="text-xl text-gray-400 line-through">
                                     {formatPrice(product.original_price)}
                                 </p>
-                                <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">
-                                    {calculateDiscount(product.original_price, product.price)}% OFF
+                                {/* % OFF Tag */}
+                                <span className="inline-flex items-center gap-1 bg-red-500 text-white text-sm font-bold px-2.5 py-1 rounded-lg shadow-sm">
+                                    ⚡ {calculateDiscount(product.original_price, product.price)}% OFF
                                 </span>
                             </>
                         ) : (

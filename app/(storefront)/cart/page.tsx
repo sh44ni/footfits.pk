@@ -3,7 +3,7 @@
 import { useCart } from '@/lib/context/CartContext';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Trash2, Minus, Plus, Footprints } from 'lucide-react';
+import { Trash2, Minus, Plus, Footprints, Loader2 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -14,6 +14,7 @@ export default function CartPage() {
     const [appliedVoucher, setAppliedVoucher] = useState('');
     const [voucherError, setVoucherError] = useState('');
     const [isApplyingVoucher, setIsApplyingVoucher] = useState(false);
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     const subtotal = getSubtotal();
     const deliveryFee = subtotal >= 5000 ? 0 : 200;
@@ -33,7 +34,7 @@ export default function CartPage() {
             if (data.valid) {
                 setDiscount(data.discount);
                 setAppliedVoucher(data.code);
-                setVoucherCode(data.code); // Normalize case
+                setVoucherCode(data.code);
             } else {
                 setDiscount(0);
                 setAppliedVoucher('');
@@ -47,14 +48,30 @@ export default function CartPage() {
         }
     };
 
+    const handleCheckout = () => {
+        setIsCheckingOut(true);
+        fetch('/api/auth/session')
+            .then(res => res.json())
+            .then(data => {
+                if (data.authenticated) {
+                    window.location.href = `/checkout${appliedVoucher ? `?voucher=${appliedVoucher}` : ''}`;
+                } else {
+                    window.location.href = '/checkout/auth';
+                }
+            })
+            .catch(() => {
+                window.location.href = '/checkout/auth';
+            });
+    };
+
     if (items.length === 0) {
         return (
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center animate-fade-in-up">
                 <h1 className="text-3xl font-bold text-foreground mb-4">Your Cart is Empty</h1>
                 <p className="text-gray-600 mb-8">Add some products to get started!</p>
                 <Link
                     href="/shop"
-                    className="inline-block bg-secondary text-foreground font-semibold px-8 py-3 rounded-full hover:bg-secondary/90 transition-colors"
+                    className="inline-block bg-secondary text-foreground font-semibold px-8 py-3 rounded-full hover:bg-secondary/90 transition-all btn-press"
                 >
                     Start Shopping
                 </Link>
@@ -69,10 +86,10 @@ export default function CartPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Cart Items */}
                 <div className="lg:col-span-2 space-y-4">
-                    {items.map((item) => (
+                    {items.map((item, idx) => (
                         <div
                             key={`${item.product.id}-${item.size}`}
-                            className="bg-white border border-gray-200 rounded-lg p-4 flex gap-3 sm:gap-4"
+                            className={`bg-white border border-gray-200 rounded-lg p-4 flex gap-3 sm:gap-4 animate-fade-in-up stagger-${(idx % 8) + 1}`}
                         >
                             {/* Image */}
                             <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded flex-shrink-0 relative overflow-hidden">
@@ -101,7 +118,7 @@ export default function CartPage() {
                                     </div>
                                     <button
                                         onClick={() => removeItem(item.product.id, item.size)}
-                                        className="text-red-500 hover:text-red-700 transition-colors p-1"
+                                        className="text-red-500 hover:text-red-700 hover:scale-110 active:scale-90 transition-all p-1"
                                         aria-label="Remove item"
                                     >
                                         <Trash2 className="w-5 h-5" />
@@ -113,14 +130,14 @@ export default function CartPage() {
                                     <div className="flex items-center border border-gray-300 rounded h-8">
                                         <button
                                             onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)}
-                                            className="px-2 hover:bg-gray-100 transition-colors h-full flex items-center"
+                                            className="px-2 hover:bg-gray-100 active:scale-90 transition-all h-full flex items-center"
                                         >
                                             <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                                         </button>
                                         <span className="w-8 text-center font-semibold text-sm">{item.quantity}</span>
                                         <button
                                             onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)}
-                                            className="px-2 hover:bg-gray-100 transition-colors h-full flex items-center"
+                                            className="px-2 hover:bg-gray-100 active:scale-90 transition-all h-full flex items-center"
                                         >
                                             <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                                         </button>
@@ -133,7 +150,7 @@ export default function CartPage() {
 
                 {/* Order Summary */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 sticky top-20">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 sticky top-20 animate-fade-in-up">
                         <h2 className="text-xl font-bold text-foreground mb-4">Order Summary</h2>
 
                         {/* Voucher Code */}
@@ -153,20 +170,20 @@ export default function CartPage() {
                                 <button
                                     onClick={handleApplyVoucher}
                                     disabled={!voucherCode || isApplyingVoucher}
-                                    className="px-4 py-2 bg-primary text-white font-semibold rounded hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    className="px-4 py-2 bg-primary text-white font-semibold rounded hover:bg-primary/90 transition-all btn-press disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                 >
                                     {isApplyingVoucher ? (
                                         <>
-                                            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            <span>Applying...</span>
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            <span>...</span>
                                         </>
                                     ) : (
                                         'Apply'
                                     )}
                                 </button>
                             </div>
-                            {voucherError && <p className="text-xs text-red-500 mt-1">{voucherError}</p>}
-                            {appliedVoucher && <p className="text-xs text-green-600 mt-1">Voucher applied!</p>}
+                            {voucherError && <p className="text-xs text-red-500 mt-1 animate-fade-in-up">{voucherError}</p>}
+                            {appliedVoucher && <p className="text-xs text-green-600 mt-1 animate-fade-in-up">Voucher applied!</p>}
                         </div>
 
                         {/* Summary */}
@@ -180,7 +197,7 @@ export default function CartPage() {
                                 <span>{deliveryFee === 0 ? 'FREE' : formatPrice(deliveryFee)}</span>
                             </div>
                             {discount > 0 && (
-                                <div className="flex justify-between text-green-600">
+                                <div className="flex justify-between text-green-600 animate-fade-in-up">
                                     <span>Discount</span>
                                     <span>-{formatPrice(discount)}</span>
                                 </div>
@@ -198,21 +215,18 @@ export default function CartPage() {
 
                         {/* Checkout Button */}
                         <button
-                            onClick={() => {
-                                fetch('/api/auth/session')
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        if (data.authenticated) {
-                                            window.location.href = `/checkout${appliedVoucher ? `?voucher=${appliedVoucher}` : ''}`;
-                                        } else {
-                                            window.location.href = '/checkout/auth';
-                                        }
-                                    })
-                                    .catch(() => window.location.href = '/checkout/auth');
-                            }}
-                            className="block w-full mt-6 bg-secondary text-foreground font-bold py-3 rounded-lg text-center hover:bg-secondary/90 transition-colors"
+                            onClick={handleCheckout}
+                            disabled={isCheckingOut}
+                            className="block w-full mt-6 bg-secondary text-foreground font-bold py-3 rounded-lg text-center hover:bg-secondary/90 transition-all btn-press disabled:opacity-70 flex items-center justify-center gap-2"
                         >
-                            Proceed to Checkout
+                            {isCheckingOut ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Processing...
+                                </>
+                            ) : (
+                                'Proceed to Checkout'
+                            )}
                         </button>
                     </div>
                 </div>

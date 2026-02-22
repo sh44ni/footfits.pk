@@ -450,9 +450,16 @@ function CheckoutContent() {
                 <button
                     type="submit"
                     disabled={isSubmitting || (formData.paymentMethod === 'bank_transfer' && !proofUrl)}
-                    className="w-full bg-secondary text-foreground font-semibold py-4 rounded-lg hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-secondary text-foreground font-semibold py-4 rounded-lg hover:bg-secondary/90 transition-all btn-press disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                    {isSubmitting ? 'Placing Order...' : 'Place Order'}
+                    {isSubmitting ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Placing Order...
+                        </>
+                    ) : (
+                        'Place Order'
+                    )}
                 </button>
             </form>
         </div>

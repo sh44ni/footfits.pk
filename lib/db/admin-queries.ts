@@ -134,7 +134,17 @@ export async function adminDeleteProduct(id: string) {
         await db.update(products).set({ status: 'archived', updated_at: new Date() }).where(eq(products.id, id));
         return true;
     } catch (error) {
-        console.error('Error deleting product:', error);
+        console.error('Error archiving product:', error);
+        throw error;
+    }
+}
+
+export async function adminPermanentDeleteProduct(id: string) {
+    try {
+        await db.delete(products).where(eq(products.id, id));
+        return true;
+    } catch (error) {
+        console.error('Error permanently deleting product:', error);
         throw error;
     }
 }

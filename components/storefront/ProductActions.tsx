@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Product } from '@/types';
 import { useCart } from '@/lib/context/CartContext';
 import { useRouter } from 'next/navigation';
-
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProductActionsProps {
@@ -16,32 +16,40 @@ export default function ProductActions({ product }: ProductActionsProps) {
     const { addItem } = useCart();
     const router = useRouter();
     const [error, setError] = useState('');
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [buyingNow, setBuyingNow] = useState(false);
+
+    const isSoldOut = product.stock <= 0;
 
     const handleAddToCart = () => {
+        if (isSoldOut) return;
         if (!selectedSize && product.sizes && product.sizes.length > 0) {
             setError('Please select a size');
             return;
         }
 
-        // If product has no sizes, use default "Total" or handle logic
         const sizeToAdd = selectedSize || (product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'Standard');
 
+        setAddingToCart(true);
         addItem(product, sizeToAdd, 1);
         setError('');
 
-        // Optional: Show toast or feedback
         toast.success('Added to Cart', {
             description: `${product.name} (${sizeToAdd}) has been added to your cart.`
         });
+
+        setTimeout(() => setAddingToCart(false), 600);
     };
 
     const handleBuyNow = () => {
+        if (isSoldOut) return;
         if (!selectedSize && product.sizes && product.sizes.length > 0) {
             setError('Please select a size');
             return;
         }
 
         const sizeToAdd = selectedSize || (product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'Standard');
+        setBuyingNow(true);
         addItem(product, sizeToAdd, 1);
         router.push('/cart');
     };
@@ -53,16 +61,19 @@ export default function ProductActions({ product }: ProductActionsProps) {
                 <div>
                     <div className="flex justify-between items-center mb-2">
                         <p className="text-sm font-semibold text-foreground">Select Size</p>
-                        {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
+                        {error && <p className="text-xs text-red-500 font-medium animate-fade-in-up">{error}</p>}
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {product.sizes.map((size) => (
                             <button
                                 key={size}
                                 onClick={() => { setSelectedSize(size); setError(''); }}
-                                className={`px-4 py-2 border rounded transition-all font-medium text-sm ${selectedSize === size
-                                    ? 'border-[#284E3D] bg-[#284E3D] text-white shadow-md'
-                                    : 'border-gray-200 hover:border-[#284E3D] hover:text-[#284E3D] bg-white text-gray-900'
+                                disabled={isSoldOut}
+                                className={`px-4 py-2 border rounded transition-all font-medium text-sm btn-press ${isSoldOut
+                                        ? 'border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed'
+                                        : selectedSize === size
+                                            ? 'border-[#284E3D] bg-[#284E3D] text-white shadow-md'
+                                            : 'border-gray-200 hover:border-[#284E3D] hover:text-[#284E3D] bg-white text-gray-900'
                                     }`}
                             >
                                 {size}
@@ -74,19 +85,42 @@ export default function ProductActions({ product }: ProductActionsProps) {
 
             {/* Action Buttons */}
             <div className="space-y-3 pt-2">
-                <button
-                    onClick={handleAddToCart}
-                    className="w-full bg-[#284E3D] text-white font-bold py-3.5 rounded-lg hover:bg-[#284E3D]/90 transition-all active:scale-[0.98] shadow-sm uppercase tracking-wide"
-                >
-                    Add to Cart
-                </button>
-                <button
-                    onClick={handleBuyNow}
-                    className="w-full border-2 border-[#284E3D] text-[#284E3D] font-bold py-3.5 rounded-lg hover:bg-[#284E3D] hover:text-white transition-all active:scale-[0.98] shadow-sm uppercase tracking-wide"
-                >
-                    Buy Now
-                </button>
-
+                {isSoldOut ? (
+                    <div className="w-full bg-gray-100 border-2 border-gray-200 text-gray-500 font-bold py-3.5 rounded-lg text-center uppercase tracking-wide cursor-not-allowed">
+                        Sold Out
+                    </div>
+                ) : (
+                    <>
+                        <button
+                            onClick={handleAddToCart}
+                            disabled={addingToCart}
+                            className="w-full bg-[#284E3D] text-white font-bold py-3.5 rounded-lg hover:bg-[#284E3D]/90 transition-all btn-press shadow-sm uppercase tracking-wide disabled:opacity-70 flex items-center justify-center gap-2"
+                        >
+                            {addingToCart ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Adding...
+                                </>
+                            ) : (
+                                'Add to Cart'
+                            )}
+                        </button>
+                        <button
+                            onClick={handleBuyNow}
+                            disabled={buyingNow}
+                            className="w-full border-2 border-[#284E3D] text-[#284E3D] font-bold py-3.5 rounded-lg hover:bg-[#284E3D] hover:text-white transition-all btn-press shadow-sm uppercase tracking-wide disabled:opacity-70 flex items-center justify-center gap-2"
+                        >
+                            {buyingNow ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Redirecting...
+                                </>
+                            ) : (
+                                'Buy Now'
+                            )}
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );

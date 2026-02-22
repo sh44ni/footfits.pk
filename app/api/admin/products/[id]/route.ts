@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminGetProductById, adminUpdateProduct, adminDeleteProduct } from '@/lib/db/admin-queries';
+import { adminGetProductById, adminUpdateProduct, adminDeleteProduct, adminPermanentDeleteProduct } from '@/lib/db/admin-queries';
 import { requireAuth } from '@/lib/auth/utils';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -38,7 +38,14 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     try {
         const { id } = await params;
-        await adminDeleteProduct(id);
+        const permanent = request.nextUrl.searchParams.get('permanent') === 'true';
+
+        if (permanent) {
+            await adminPermanentDeleteProduct(id);
+        } else {
+            await adminDeleteProduct(id);
+        }
+
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });

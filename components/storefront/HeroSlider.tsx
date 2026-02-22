@@ -43,7 +43,7 @@ export default function HeroSlider({ sliders }: HeroSliderProps) {
                     <Link
                         key={slider.id}
                         href={slider.cta_link || '#'}
-                        className={`absolute inset-0 transition-opacity duration-500 ${index === currentIndex ? 'opacity-100' : 'opacity-0'
+                        className={`absolute inset-0 transition-all duration-700 ease-out ${index === currentIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
                             }`}
                     >
                         <div className="relative w-full h-full">
@@ -69,14 +69,14 @@ export default function HeroSlider({ sliders }: HeroSliderProps) {
                     <>
                         <button
                             onClick={goToPrevious}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all active:scale-90"
                             aria-label="Previous slide"
                         >
                             <ChevronLeft className="w-6 h-6" />
                         </button>
                         <button
                             onClick={goToNext}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all active:scale-90"
                             aria-label="Next slide"
                         >
                             <ChevronRight className="w-6 h-6" />

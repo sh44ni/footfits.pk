@@ -22,8 +22,8 @@ export default async function ShopPage({
             {/* Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {products.length > 0 ? (
-                    products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
+                    products.map((product, index) => (
+                        <ProductCard key={product.id} product={product} index={index} />
                     ))
                 ) : (
                     <div className="col-span-full py-16 text-center">

@@ -21,13 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={lexend.className}>
-        {/* Google Analytics */}
+      <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-GPPHN8KXP4"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -35,6 +34,8 @@ export default function RootLayout({
             gtag('config', 'G-GPPHN8KXP4');
           `}
         </Script>
+      </head>
+      <body className={lexend.className}>
         <NextTopLoader color="#284E3D" showSpinner={false} />
         <CartProvider>
           {children}

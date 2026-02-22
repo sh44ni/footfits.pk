@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Package, Search, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Package, Search, Plus, Edit, Trash2, Eye, EyeOff, XCircle } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -63,12 +63,23 @@ export default function AdminProductsPage() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to archive this product?')) return;
+        if (!confirm('Archive this product? It will be hidden from the store.')) return;
         try {
             await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
             fetchProducts();
         } catch (error) {
-            console.error('Delete error:', error);
+            console.error('Archive error:', error);
+        }
+    };
+
+    const handlePermanentDelete = async (id: string, name: string) => {
+        if (!confirm(`⚠️ PERMANENTLY DELETE "${name}"?\n\nThis cannot be undone. The product will be completely removed from the database.`)) return;
+        if (!confirm(`Are you absolutely sure? Type confirms permanent deletion of "${name}".`)) return;
+        try {
+            await fetch(`/api/admin/products/${id}?permanent=true`, { method: 'DELETE' });
+            fetchProducts();
+        } catch (error) {
+            console.error('Permanent delete error:', error);
         }
     };
 
@@ -196,8 +207,11 @@ export default function AdminProductsPage() {
                                                         <Link href={`/admin/products/${product.id}`} className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors">
                                                             <Edit className="w-4 h-4" />
                                                         </Link>
-                                                        <button onClick={() => handleDelete(product.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors">
+                                                        <button onClick={() => handleDelete(product.id)} className="p-1.5 text-gray-400 hover:text-orange-600 transition-colors" title="Archive">
                                                             <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                        <button onClick={() => handlePermanentDelete(product.id, product.name)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Permanently Delete">
+                                                            <XCircle className="w-4 h-4" />
                                                         </button>
                                                     </div>
                                                 </td>

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from 'sonner';
 
-import { GoogleAnalytics } from '@next/third-parties/google';
+import GoogleAnalytics from '@/components/storefront/GoogleAnalytics';
 
 export default function RootLayout({
   children,
@@ -24,9 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <GoogleAnalytics gaId="G-J4HPCYTSY0" />
       </head>
       <body className={lexend.className}>
+        <GoogleAnalytics />
         <NextTopLoader color="#284E3D" showSpinner={false} />
         <CartProvider>
           {children}

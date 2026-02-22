@@ -168,6 +168,17 @@ function CheckoutContent() {
             const data = await res.json();
             orderSubmittedRef.current = true;
             clearCart();
+
+            // Track analytics
+            fetch('/api/analytics', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event_type: 'purchase',
+                    path: window.location.pathname,
+                }),
+            }).catch(console.error);
+
             const orderPayload = {
                 name: formData.name,
                 email: formData.email,

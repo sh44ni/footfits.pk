@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDashboardStats, getRecentOrders } from '@/lib/db/admin-queries';
+import { getDashboardStats, getRecentOrders, getAnalyticsStats } from '@/lib/db/admin-queries';
 import { requireAuth } from '@/lib/auth/utils';
 
 export async function GET(request: NextRequest) {
@@ -7,12 +7,13 @@ export async function GET(request: NextRequest) {
     if (auth instanceof NextResponse) return auth;
 
     try {
-        const [stats, recentOrders] = await Promise.all([
+        const [stats, recentOrders, analytics] = await Promise.all([
             getDashboardStats(),
             getRecentOrders(5),
+            getAnalyticsStats(),
         ]);
 
-        return NextResponse.json({ stats, recentOrders });
+        return NextResponse.json({ stats, recentOrders, analytics });
     } catch (error) {
         console.error('Stats API error:', error);
         return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });

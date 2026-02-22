@@ -17,10 +17,12 @@ import {
     X,
     MessageSquare,
     Star,
+    Activity,
 } from 'lucide-react';
 
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/analytics', label: 'Analytics', icon: Activity },
     { href: '/admin/products', label: 'Products', icon: Package },
     { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { href: '/admin/customers', label: 'Customers', icon: Users },

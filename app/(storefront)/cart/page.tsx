@@ -50,6 +50,17 @@ export default function CartPage() {
 
     const handleCheckout = () => {
         setIsCheckingOut(true);
+
+        // Track analytics
+        fetch('/api/analytics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_type: 'checkout_started',
+                path: window.location.pathname,
+            }),
+        }).catch(console.error);
+
         fetch('/api/auth/session')
             .then(res => res.json())
             .then(data => {

@@ -12,6 +12,12 @@ interface Stats {
     pendingOrders: number;
 }
 
+interface Analytics {
+    totalPageViews: number;
+    totalAddToCarts: number;
+    visitorsToday: number;
+}
+
 interface RecentOrder {
     id: string;
     order_number: string;
@@ -38,6 +44,11 @@ export default function AdminDashboard() {
         totalRevenue: 0,
         pendingOrders: 0,
     });
+    const [analytics, setAnalytics] = useState<Analytics>({
+        totalPageViews: 0,
+        totalAddToCarts: 0,
+        visitorsToday: 0,
+    });
     const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -48,6 +59,7 @@ export default function AdminDashboard() {
                 const data = await res.json();
                 if (data.stats) setStats(data.stats);
                 if (data.recentOrders) setRecentOrders(data.recentOrders);
+                if (data.analytics) setAnalytics(data.analytics);
             } catch (error) {
                 console.error('Error fetching stats:', error);
             } finally {
@@ -64,6 +76,12 @@ export default function AdminDashboard() {
         { title: 'Pending Orders', value: stats.pendingOrders, icon: Clock, color: '#ea580c', link: '/admin/orders' },
     ];
 
+    const analyticsCards = [
+        { title: "Today's Visitors", value: analytics.visitorsToday, color: '#6366f1' },
+        { title: "Page Views", value: analytics.totalPageViews, color: '#10b981' },
+        { title: "Add to Carts", value: analytics.totalAddToCarts, color: '#f59e0b' },
+    ];
+
     return (
         <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
@@ -74,6 +92,22 @@ export default function AdminDashboard() {
                 </div>
             ) : (
                 <>
+                    {/* Real-time Analytics Layer */}
+                    <div className="mb-8">
+                        <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                            Live Store Analytics
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {analyticsCards.map((card) => (
+                                <div key={card.title} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center">
+                                    <p className="text-sm text-gray-500 mb-1">{card.title}</p>
+                                    <p className="text-3xl font-black" style={{ color: card.color }}>{card.value}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         {statCards.map((card) => {

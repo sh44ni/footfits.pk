@@ -158,3 +158,13 @@ export const reviews = pgTable('reviews', {
     created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
     updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
+
+// Analytics Events
+export const analytics_events = pgTable('analytics_events', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    session_id: text('session_id').notNull(),
+    event_type: text('event_type').notNull(), // 'page_view', 'product_view', 'add_to_cart'
+    path: text('path').notNull(),
+    product_id: uuid('product_id').references(() => products.id),
+    created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});

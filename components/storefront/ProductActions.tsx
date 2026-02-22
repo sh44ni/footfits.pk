@@ -38,6 +38,17 @@ export default function ProductActions({ product }: ProductActionsProps) {
             description: `${product.name} (${sizeToAdd}) has been added to your cart.`
         });
 
+        // Track analytics
+        fetch('/api/analytics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_type: 'add_to_cart',
+                path: window.location.pathname,
+                product_id: product.id,
+            }),
+        }).catch(console.error);
+
         setTimeout(() => setAddingToCart(false), 600);
     };
 
@@ -51,6 +62,18 @@ export default function ProductActions({ product }: ProductActionsProps) {
         const sizeToAdd = selectedSize || (product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'Standard');
         setBuyingNow(true);
         addItem(product, sizeToAdd, 1);
+
+        // Track analytics
+        fetch('/api/analytics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_type: 'add_to_cart',
+                path: window.location.pathname,
+                product_id: product.id,
+            }),
+        }).catch(console.error);
+
         router.push('/cart');
     };
 
@@ -70,10 +93,10 @@ export default function ProductActions({ product }: ProductActionsProps) {
                                 onClick={() => { setSelectedSize(size); setError(''); }}
                                 disabled={isSoldOut}
                                 className={`px-4 py-2 border rounded transition-all font-medium text-sm btn-press ${isSoldOut
-                                        ? 'border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed'
-                                        : selectedSize === size
-                                            ? 'border-[#284E3D] bg-[#284E3D] text-white shadow-md'
-                                            : 'border-gray-200 hover:border-[#284E3D] hover:text-[#284E3D] bg-white text-gray-900'
+                                    ? 'border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed'
+                                    : selectedSize === size
+                                        ? 'border-[#284E3D] bg-[#284E3D] text-white shadow-md'
+                                        : 'border-gray-200 hover:border-[#284E3D] hover:text-[#284E3D] bg-white text-gray-900'
                                     }`}
                             >
                                 {size}

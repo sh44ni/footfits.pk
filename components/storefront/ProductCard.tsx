@@ -39,6 +39,17 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                 description: `${product.name} (${product.sizes[0]}) added.`
             });
             setTimeout(() => setJustAdded(false), 1500);
+
+            // Track analytics
+            fetch('/api/analytics', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event_type: 'add_to_cart',
+                    path: window.location.pathname,
+                    product_id: product.id,
+                }),
+            }).catch(console.error);
         }
     };
 
@@ -142,10 +153,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         onClick={handleAddToCart}
                         disabled={isSoldOut}
                         className={`w-full mt-3 py-2 border-2 text-xs font-bold rounded uppercase tracking-wide btn-press flex items-center justify-center gap-1.5 transition-all duration-200 ${isSoldOut
-                                ? 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
-                                : justAdded
-                                    ? 'bg-green-500 border-green-500 text-white'
-                                    : 'border-primary text-primary hover:bg-primary hover:text-white'
+                            ? 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
+                            : justAdded
+                                ? 'bg-green-500 border-green-500 text-white'
+                                : 'border-primary text-primary hover:bg-primary hover:text-white'
                             }`}
                     >
                         {isSoldOut ? (

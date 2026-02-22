@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { products, orders, customers, vouchers, sliders, admin_users, settings } from '@/lib/db/schema';
+import { products, orders, customers, vouchers, sliders, admin_users, settings, analytics_events } from '@/lib/db/schema';
 import { eq, desc, asc, ilike, and, sql, count, sum } from 'drizzle-orm';
 import type { Product, Slider } from '@/types';
 
@@ -21,6 +21,214 @@ export async function getDashboardStats() {
     } catch (error) {
         console.error('Error fetching dashboard stats:', error);
         return { totalProducts: 0, totalOrders: 0, totalRevenue: 0, pendingOrders: 0 };
+    }
+}
+
+export async function getAnalyticsStats() {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // This requires importing `analytics_events` at the top of the file. We'll do that in another pass or rely on Drizzle's direct table access if it's already there (it's not).
+        // Let's import it first in the next step, for now just returning default 0s if it fails
+        const [pageViews] = await db
+            .select({ count: count() })
+            .from(analytics_events)
+            .where(eq(analytics_events.event_type, 'page_view'));
+
+        const [addToCarts] = await db
+            .select({ count: count() })
+            .from(analytics_events)
+            .where(eq(analytics_events.event_type, 'add_to_cart'));
+
+        // Count unique sessions for today
+        const uniqueVisitorsQuery = await db.execute(sql`
+            SELECT COUNT(DISTINCT session_id) as count 
+            FROM analytics_events 
+            WHERE created_at >= ${today.toISOString()}
+        `);
+
+        const visitorsToday = Number(uniqueVisitorsQuery.rows?.[0]?.count || 0);
+
+        return {
+            totalPageViews: pageViews?.count ?? 0,
+            totalAddToCarts: addToCarts?.count ?? 0,
+            visitorsToday,
+        };
+    } catch (error) {
+        console.error('Error fetching analytics stats:', error);
+        return { totalPageViews: 0, totalAddToCarts: 0, visitorsToday: 0 };
+    }
+}
+
+export async function getAdvancedAnalytics(period: 'today' | 'yesterday' | '7days' | '30days' = '7days') {
+    try {
+        const now = new Date();
+        let startDate = new Date();
+        let previousStartDate = new Date();
+        let previousEndDate = new Date();
+
+        if (period === 'today') {
+            startDate.setHours(0, 0, 0, 0);
+            previousStartDate.setDate(now.getDate() - 1);
+            previousStartDate.setHours(0, 0, 0, 0);
+            previousEndDate.setDate(now.getDate() - 1);
+            previousEndDate.setHours(23, 59, 59, 999);
+        } else if (period === 'yesterday') {
+            startDate.setDate(now.getDate() - 1);
+            startDate.setHours(0, 0, 0, 0);
+            now.setDate(now.getDate() - 1);
+            now.setHours(23, 59, 59, 999);
+
+            previousStartDate.setDate(startDate.getDate() - 1);
+            previousStartDate.setHours(0, 0, 0, 0);
+            previousEndDate.setDate(startDate.getDate() - 1);
+            previousEndDate.setHours(23, 59, 59, 999);
+        } else if (period === '7days') {
+            startDate.setDate(now.getDate() - 7);
+            previousStartDate.setDate(now.getDate() - 14);
+            previousEndDate.setDate(now.getDate() - 7);
+        } else if (period === '30days') {
+            startDate.setDate(now.getDate() - 30);
+            previousStartDate.setDate(now.getDate() - 60);
+            previousEndDate.setDate(now.getDate() - 30);
+        }
+
+        const startIso = startDate.toISOString();
+        const endIso = now.toISOString();
+        const prevStartIso = previousStartDate.toISOString();
+        const prevEndIso = previousEndDate.toISOString();
+
+        // 1. Current Period Stats (Funnel)
+        const currentStatsQuery = await db.execute(sql`
+            WITH session_counts AS (
+                SELECT session_id, COUNT(*) as event_count
+                FROM analytics_events
+                WHERE created_at BETWEEN ${startIso} AND ${endIso}
+                GROUP BY session_id
+            )
+            SELECT 
+                COUNT(DISTINCT a.session_id) as visitors,
+                SUM(CASE WHEN a.event_type = 'page_view' THEN 1 ELSE 0 END) as page_views,
+                SUM(CASE WHEN a.event_type = 'product_view' THEN 1 ELSE 0 END) as product_views,
+                SUM(CASE WHEN a.event_type = 'add_to_cart' THEN 1 ELSE 0 END) as add_to_carts,
+                SUM(CASE WHEN a.event_type = 'checkout_started' THEN 1 ELSE 0 END) as checkouts,
+                SUM(CASE WHEN a.event_type = 'purchase' THEN 1 ELSE 0 END) as purchases,
+                (SELECT COUNT(*) FROM session_counts WHERE event_count = 1) as bounced_sessions
+            FROM analytics_events a
+            WHERE a.created_at BETWEEN ${startIso} AND ${endIso}
+        `);
+
+        // 2. Previous Period Stats (for comparative trend)
+        const prevStatsQuery = await db.execute(sql`
+            WITH session_counts AS (
+                SELECT session_id, COUNT(*) as event_count
+                FROM analytics_events
+                WHERE created_at BETWEEN ${prevStartIso} AND ${prevEndIso}
+                GROUP BY session_id
+            )
+            SELECT 
+                COUNT(DISTINCT a.session_id) as visitors,
+                SUM(CASE WHEN a.event_type = 'add_to_cart' THEN 1 ELSE 0 END) as add_to_carts,
+                SUM(CASE WHEN a.event_type = 'purchase' THEN 1 ELSE 0 END) as purchases,
+                (SELECT COUNT(*) FROM session_counts WHERE event_count = 1) as bounced_sessions
+            FROM analytics_events a
+            WHERE a.created_at BETWEEN ${prevStartIso} AND ${prevEndIso}
+        `);
+
+        // 3. Traffic Trend (Daily aggregate for the chart)
+        const trendQuery = await db.execute(sql`
+            SELECT 
+                DATE(created_at) as date,
+                COUNT(DISTINCT session_id) as visitors,
+                COUNT(*) as views
+            FROM analytics_events
+            WHERE created_at BETWEEN ${startIso} AND ${endIso}
+            AND event_type IN ('page_view', 'product_view')
+            GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at) ASC
+        `);
+
+        // 4. Top Products
+        const topProductsQuery = await db.execute(sql`
+            SELECT 
+                p.id, 
+                p.name, 
+                p.slug,
+                SUM(CASE WHEN a.event_type = 'product_view' THEN 1 ELSE 0 END) as views,
+                SUM(CASE WHEN a.event_type = 'add_to_cart' THEN 1 ELSE 0 END) as add_to_carts
+            FROM analytics_events a
+            JOIN products p ON a.product_id = p.id
+            WHERE a.created_at BETWEEN ${startIso} AND ${endIso}
+            GROUP BY p.id, p.name, p.slug
+            ORDER BY views DESC
+            LIMIT 5
+        `);
+
+        const current = currentStatsQuery.rows[0];
+        const prev = prevStatsQuery.rows[0];
+
+        // Format chart data
+        const chartData = trendQuery.rows.map(row => ({
+            date: new Date(row.date as string).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            visitors: Number(row.visitors),
+            views: Number(row.views)
+        }));
+
+        // Calculate rates
+        const currentVisitors = Number(current?.visitors || 0);
+        const prevVisitors = Number(prev?.visitors || 0);
+
+        const bounceRate = currentVisitors > 0 ? (Number(current?.bounced_sessions || 0) / currentVisitors) * 100 : 0;
+        const prevBounceRate = prevVisitors > 0 ? (Number(prev?.bounced_sessions || 0) / prevVisitors) * 100 : 0;
+
+        const conversionRate = currentVisitors > 0 ? (Number(current?.purchases || 0) / currentVisitors) * 100 : 0;
+        const prevConversionRate = prevVisitors > 0 ? (Number(prev?.purchases || 0) / prevVisitors) * 100 : 0;
+
+        const calculateTrend = (curr: number, preval: number, inverted = false) => {
+            if (preval === 0) return { value: curr > 0 ? 100 : 0, isPositive: curr > 0 ? !inverted : true };
+            const diff = curr - preval;
+            const percentage = (diff / preval) * 100;
+            const value = Math.round(Math.abs(percentage) * 10) / 10;
+            const isPositive = inverted ? diff <= 0 : diff >= 0;
+            return { value, isPositive };
+        };
+
+        return {
+            current: {
+                visitors: currentVisitors,
+                pageViews: Number(current?.page_views || 0),
+                productViews: Number(current?.product_views || 0),
+                addToCarts: Number(current?.add_to_carts || 0),
+                checkouts: Number(current?.checkouts || 0),
+                purchases: Number(current?.purchases || 0),
+                bounceRate: Math.round(bounceRate * 10) / 10,
+                conversionRate: Math.round(conversionRate * 100) / 100,
+            },
+            previous: {
+                visitors: prevVisitors,
+                addToCarts: Number(prev?.add_to_carts || 0),
+                purchases: Number(prev?.purchases || 0),
+                bounceRate: Math.round(prevBounceRate * 10) / 10,
+                conversionRate: Math.round(prevConversionRate * 100) / 100,
+            },
+            trends: {
+                visitors: calculateTrend(currentVisitors, prevVisitors),
+                addToCarts: calculateTrend(Number(current?.add_to_carts || 0), Number(prev?.add_to_carts || 0)),
+                bounceRate: calculateTrend(bounceRate, prevBounceRate, true), // inverted (lower bounce is better)
+                conversionRate: calculateTrend(conversionRate, prevConversionRate),
+            },
+            chartData,
+            topProducts: topProductsQuery.rows.map(row => ({
+                id: row.id,
+                name: row.name,
+                views: Number(row.views),
+                addToCarts: Number(row.add_to_carts),
+            }))
+        };
+    } catch (error) {
+        console.error('Error fetching advanced analytics:', error);
+        return null;
     }
 }
 

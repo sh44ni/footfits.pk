@@ -14,6 +14,8 @@ export const metadata: Metadata = {
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from 'sonner';
 
+import { GoogleAnalytics } from '@next/third-parties/google';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,18 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-GPPHN8KXP4"
-          strategy="beforeInteractive"
-        />
-        <Script id="google-analytics" strategy="beforeInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-GPPHN8KXP4');
-          `}
-        </Script>
+        <GoogleAnalytics gaId="G-GPPHN8KXP4" />
       </head>
       <body className={lexend.className}>
         <NextTopLoader color="#284E3D" showSpinner={false} />

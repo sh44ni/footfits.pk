@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <GoogleAnalytics gaId="G-H170KZSE8Z" />
+        <GoogleAnalytics gaId="G-J4HPCYTSY0" />
       </head>
       <body className={lexend.className}>
         <NextTopLoader color="#284E3D" showSpinner={false} />
